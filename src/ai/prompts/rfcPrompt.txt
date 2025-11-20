@@ -1,0 +1,17 @@
+This is JSON from Excel:
+
+${JSON.stringify(excelJson, null, 2)}
+
+Please check according to the following rules and respond in English:
+
+Rules for validation:
+- title หน้าแรก(text ชุดที่ 2)และ title หน้าอื่นๆต้องเหมือนกันทุกหน้า
+- Configuration Date should be today's date
+- return as JSON:
+{
+  "valid": true/false,
+  "errors": [{
+    "sheet": "sheet name",
+    "issue": "issue description"
+  }, ...]
+}
