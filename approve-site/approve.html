@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Document Approval</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+  body {
+    font-family: Arial, sans-serif;
+    background: #f8f9fa;
+    padding: 40px;
+    text-align: center;
+  }
+
+  h1 {
+    font-size: 24px;
+  }
+
+  #approveBtn {
+    padding: 14px 32px;
+    font-size: 18px;
+    border: none;
+    background: #007bff;
+    color: white;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: 0.25s;
+  }
+
+  #approveBtn:active {
+    transform: scale(0.97);
+  }
+
+  #approvedMessage {
+    margin-top: 20px;
+    font-size: 20px;
+    color: green;
+    display: none;
+    font-weight: bold;
+  }
+
+  .fade-in {
+    animation: fadeIn 0.6s ease forwards;
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(5px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+</style>
+</head>
+<body>
+
+<h1>Approval Confirmation</h1>
+
+<p>Please click the button below to confirm your approval.</p>
+
+<button id="approveBtn">Approve</button>
+
+<div id="approvedMessage" class="fade-in">✔ Approved</div>
+
+<script>
+  document.getElementById("approveBtn").addEventListener("click", function () {
+    // Hide button
+    this.style.display = "none";
+
+    // Show result
+    const msg = document.getElementById("approvedMessage");
+    msg.style.display = "block";
+
+    // OPTIONAL: ส่งข้อมูล approval กลับไปที่ Monday Webhook / หรือ Google Sheets (ถ้าคุณอยากเพิ่ม)
+    // ตอนนี้ version นี้เป็น frontend-only ตามที่คุณต้องการ
+  });
+</script>
+
+</body>
+</html>
