@@ -58,8 +58,13 @@ const formattedHtml = `
   </li>
 </ul>
 
-<p>Please review and update the RFC document accordingly.<br>
-If you need automated correction or revalidation, feel free to resubmit the updated file.</p>
+<p>Please review the analysis and click the link below to approve:</p>
+
+<p><a href="https://yhongyhong.github.io/MondayAPIPractice/" 
+   style="font-size:18px; font-weight:bold;">
+   Click here to approve
+</a></p>
+<p>Once you have made the necessary corrections, please re-upload the updated RFC Excel file for re-evaluation.</p>
 
 <p>Best regards,<br>
 AI Automation System</p>
