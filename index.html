@@ -25,6 +25,7 @@
     border-radius: 6px;
     cursor: pointer;
     transition: 0.25s;
+    margin-top: 20px;
   }
 
   #approveBtn:active {
@@ -39,37 +40,85 @@
     font-weight: bold;
   }
 
-  .fade-in {
-    animation: fadeIn 0.6s ease forwards;
+  #signature-pad {
+    border: 2px dashed #aaa;
+    width: 300px;
+    height: 200px;
+    margin: 20px auto;
+    background: white;
   }
 
-  @keyframes fadeIn {
-    from { opacity: 0; transform: translateY(5px); }
-    to { opacity: 1; transform: translateY(0); }
+  #clearBtn {
+    margin-top: 10px;
+    padding: 8px 20px;
+    font-size: 14px;
+    background: #dc3545;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
   }
 </style>
 </head>
+
 <body>
 
 <h1>Approval Confirmation</h1>
+<p>Please sign below to confirm your approval.</p>
 
-<p>Please click the button below to confirm your approval.</p>
+<canvas id="signature-pad"></canvas>
+<br>
+<button id="clearBtn">Clear Signature</button>
 
 <button id="approveBtn">Approve</button>
 
-<div id="approvedMessage" class="fade-in">✔ Approved</div>
+<div id="approvedMessage" class="fade-in">✔ Signature Captured. Approved.</div>
+
+<!-- Signature Pad Library -->
+<script src="https://cdn.jsdelivr.net/npm/signature_pad@4.1.5/dist/signature_pad.umd.min.js"></script>
 
 <script>
+  // Initialize signature pad
+  const canvas = document.getElementById("signature-pad");
+  const signaturePad = new SignaturePad(canvas);
+
+  // Resize canvas for retina displays
+  function resizeCanvas() {
+    const ratio = Math.max(window.devicePixelRatio || 1, 1);
+    canvas.width = canvas.offsetWidth * ratio;
+    canvas.height = canvas.offsetHeight * ratio;
+    canvas.getContext("2d").scale(ratio, ratio);
+  }
+  resizeCanvas();
+  window.onresize = resizeCanvas;
+
+  // Clear signature
+  document.getElementById("clearBtn").addEventListener("click", () => {
+    signaturePad.clear();
+  });
+
+  // Approve with signature
   document.getElementById("approveBtn").addEventListener("click", function () {
-    // Hide button
+    if (signaturePad.isEmpty()) {
+      alert("Please provide a signature before approving.");
+      return;
+    }
+
+    // Convert signature to image
+    const signatureDataURL = signaturePad.toDataURL();
+
+    console.log("Signature Captured:", signatureDataURL);
+
+    // Hide the approve button
     this.style.display = "none";
 
-    // Show result
+    // Show confirmation
     const msg = document.getElementById("approvedMessage");
     msg.style.display = "block";
 
-    // OPTIONAL: ส่งข้อมูล approval กลับไปที่ Monday Webhook / หรือ Google Sheets (ถ้าคุณอยากเพิ่ม)
-    // ตอนนี้ version นี้เป็น frontend-only ตามที่คุณต้องการ
+    // OPTIONAL:
+    // ส่งข้อมูล signatureDataURL กลับไปยัง Monday / Webhook / Email ได้
+    // ตอนนี้ version นี้เก็บเฉพาะใน frontend
   });
 </script>
 
