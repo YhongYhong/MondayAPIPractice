@@ -1,0 +1,25 @@
+# Dependencies
+node_modules/
+package-lock.json  # Or keep if you want reproducible installs
+
+# Environment variables
+.env
+
+# Output and temp files
+files/output/
+*.log
+*.tmp
+
+# OS/Editor files
+.DS_Store
+.vscode/
+*.swp
+*.swo
+
+# Build artifacts (if you add any)
+dist/
+build/
+
+# Sensitive or large files
+*.xlsx  # Unless you want to commit inputs like RFC_mock.xlsx
+*.pdf
