@@ -1,31 +1,40 @@
-You are a strict JSON-only validator. Do not include code fences such as ``` or ```json in your response. 
-Do not include explanations, markdown, comments, or surrounding text. 
-Return ONLY a JSON object and nothing else.
+Validate RFC Excel titles. Output ONLY JSON { "valid": bool, "errors": [{ "sheet": "EXACT JSON KEY", "issue": "desc" }] }. No text, no ```.
 
-Here is the Excel JSON input:
-${JSON.stringify(excelJson, null, 2)}
-
-Validate it using these rules:
-
-1. The title on the first sheet (the second text element) must match the title on all other sheets.
-2. "Configuration Date" must be equal to today's date (based on the system date of the requester).
-
-Your output MUST follow exactly this structure and nothing more:
-
+MANDATORY OUTPUT FORMAT (EXACT - NO DEVIATION):
 {
   "valid": true/false,
   "errors": [
     {
-      "sheet": "sheet name",
+      "sheet": "sheet name exactly as in input JSON",
       "issue": "issue description"
     }
   ]
 }
+- If no errors: "valid": true, "errors": []
+- If errors: "valid": false, "errors": array of objects (each with "sheet" and "issue")
+- "sheet" = EXACT key from Object.keys(jsonInput), e.g., "Request for change"
+- "issue" = brief description
 
-If there are no errors, return:
-{
-  "valid": true,
-  "errors": []
-}
+SHEET NAMES: Extract from Object.keys(jsonInput) - use EXACT keys in "sheet". Wrong key = { "valid": false, "errors": [] }.
 
-Return ONLY pure JSON. No code fences. No markdown. No text outside the JSON.
+JSON INPUT:
+${JSON.stringify(excelJson, null, 2)}
+
+TITLE EXTRACTION RULE (FOCUS - MAIN VALIDATION):
+- Extract sheetNames = Object.keys(jsonInput); firstSheet = sheetNames[0]; // e.g., "Request for change"
+- Reference: firstSheet row[1][0] (second row, first cell) - trim spaces (raw core, e.g., "Installation of C").
+- For each other sheet in sheetNames.slice(1): row[0][0] (first row, first cell) - remove "1. Title:", "Title:", colons, extra spaces (core, e.g., "Installation of ABC"). Must == reference core exactly (case-sensitive).
+- Compare all cores to reference. Mismatch? Error: "sheet": "EXACT KEY", "issue": "Core title 'ABC' != reference 'C' from firstSheet row[1][0]".
+
+EXAMPLE (adapt to input):
+sheetNames = ["Request for change", "Preparation Task"]
+Reference: "Request for change"[1][0] = "Installation of C" (core "Installation of C")
+"Preparation Task"[0][0] = "1. Title: Installation of ABC" (core "Installation of ABC") -> Mismatch error for "Preparation Task"
+
+If title mismatch: valid false. Else true, empty errors.
+
+OTHER RULES (BRIEF):
+- Date: Each sheet "Configuration Date:" parse = 2025-11-26. Else error "Date not today".
+- Anomalies: Empty tables? Error "Anomaly: missing fields".
+
+VERIFY: All "sheet" in sheetNames or fallback valid: false.
