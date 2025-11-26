@@ -25,3 +25,4 @@ build/
 *.pdf
 
 .DS_Store
+analysis_results.json
