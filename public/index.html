@@ -103,9 +103,9 @@
   const fileId = params.get("file") || "unknown";
 
   document.getElementById("approveBtn").addEventListener("click", () => {
-    // NOTE: You said: "signature image not needed → skip signature check"
-    // If you want to FORCE signing, uncomment next line:
-    // if (signaturePad.isEmpty()) return alert("Please sign first!");
+    if (signaturePad.isEmpty()) {
+      return alert("Please sign first!");
+    }
 
     fetch("http://localhost:3000/approve", {
       method: "POST",
