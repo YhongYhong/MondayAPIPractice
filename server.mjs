@@ -2,7 +2,8 @@ import express from "express";
 import path from "path";
 import { fileURLToPath } from "url";
 import { sendEmailWithAttachment } from "./src/email/sendEmail.mjs";
-
+import { formatReport } from "./src/email/formatReport.mjs";
+import fs from "fs/promises";
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
@@ -21,18 +22,23 @@ app.post("/approve", async (req, res) => {
 
   // === LOGIC: Step A → ส่งให้ B ===
   if (step === "A" && approved) {
+    const excelFilePath = `files/input/RFC_mock.xlsx`;
+    const analysisFilePath = path.join(__dirname, "analysis-result.json");
+
+    // Load pre-computed analysis
+    const analysisData = await fs.readFile(analysisFilePath, "utf-8");
+    const analysis = JSON.parse(analysisData);
+    console.log("Loaded analysis from file.");
+
+    const html = await formatReport(analysis);
+    console.log("Report formatted.");
+
     await sendEmailWithAttachment({
       to: "65010815@kmitl.ac.th",
-      subject: `Document requires your approval`,
-      text: "Please review and approve.",
-      html: `
-        <p>A has approved this document.</p>
-        <p>Click below to approve:</p>
-        <a href="http://localhost:3000/index.html?step=B">
-          Approve Document
-        </a>
-      `,
-      attachmentPath: `files/input/RFC_mock.xlsx`
+      subject: `AI Analysis Result + Excel File (A approved)`,
+      text: "Please see the detailed analysis in the HTML version of this email.",
+      html,
+      attachmentPath: excelFilePath
     });
 
     res.json({ ok: true });

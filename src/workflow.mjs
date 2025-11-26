@@ -4,6 +4,7 @@ import { fileURLToPath } from "url";
 import { analyzeExcel } from "./ai/analyzeExcel.mjs";
 import { formatReport } from "./email/formatReport.mjs";
 import { sendEmailWithAttachment } from "./email/sendEmail.mjs";
+import fs from "fs/promises";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -15,6 +16,11 @@ async function main() {
 
     const analysis = await analyzeExcel(excelFilePath, promptTemplatePath);
     console.log("Analysis complete:", analysis);
+
+    // Save analysis to file
+    const analysisFilePath = path.join(__dirname, "../analysis-result.json");
+    await fs.writeFile(analysisFilePath, JSON.stringify(analysis, null, 2));
+    console.log("Analysis saved to file.");
 
     const html = await formatReport(analysis);
     console.log("Report formatted.");
