@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+.status.green { color: green; }
+.status.red { color: red; }
+</style>
+</head>
+<body>
+<h2>AI Analysis Report – Validation Summary</h2>
+
+<p>The automated analysis of your submitted RFC Excel file has been completed. Below is the validation result:</p>
+
+<h3>Overall Validation Status</h3>
+<p><strong>Valid:</strong> <span class="status {{color}}">{{validityText}}</span></p>
+
+<h3>Identified Issues</h3>
+<ul>{{errorListHTML}}</ul>
+
+<p>Please review the analysis and click the link below to approve:</p>
+
+<p>
+  <a href="http://localhost:3000/index.html?step=A&file=RFC_mock""
+     style="font-size:18px; font-weight:bold;">
+     Click here to approve
+  </a>
+</p>
+
+<p>Best regards,<br>AI Automation System</p>
+</body>
+</html>

@@ -1,17 +1,31 @@
-This is JSON from Excel:
+You are a strict JSON-only validator. Do not include code fences such as ``` or ```json in your response. 
+Do not include explanations, markdown, comments, or surrounding text. 
+Return ONLY a JSON object and nothing else.
 
+Here is the Excel JSON input:
 ${JSON.stringify(excelJson, null, 2)}
 
-Please check according to the following rules and respond in English:
+Validate it using these rules:
 
-Rules for validation:
-- title หน้าแรก(text ชุดที่ 2)และ title หน้าอื่นๆต้องเหมือนกันทุกหน้า
-- Configuration Date should be today's date
-- return as JSON:
+1. The title on the first sheet (the second text element) must match the title on all other sheets.
+2. "Configuration Date" must be equal to today's date (based on the system date of the requester).
+
+Your output MUST follow exactly this structure and nothing more:
+
 {
   "valid": true/false,
-  "errors": [{
-    "sheet": "sheet name",
-    "issue": "issue description"
-  }, ...]
+  "errors": [
+    {
+      "sheet": "sheet name",
+      "issue": "issue description"
+    }
+  ]
 }
+
+If there are no errors, return:
+{
+  "valid": true,
+  "errors": []
+}
+
+Return ONLY pure JSON. No code fences. No markdown. No text outside the JSON.
