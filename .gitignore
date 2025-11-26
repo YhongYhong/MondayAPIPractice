@@ -23,3 +23,5 @@ build/
 # Sensitive or large files
 *.xlsx  # Unless you want to commit inputs like RFC_mock.xlsx
 *.pdf
+
+.DS_Store
