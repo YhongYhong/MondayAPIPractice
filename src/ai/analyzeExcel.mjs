@@ -16,12 +16,9 @@ export async function analyzeExcel(excelFilePath, promptTemplatePath, options = 
 
     const promptTemplate = await fs.readFile(promptTemplatePath, "utf-8");
 
-    console.log("EXCEL JSON:", JSON.stringify(excelJson, null, 2));
     const prompt = promptTemplate.replace("{{excel_json}}", JSON.stringify(excelJson, null, 2));
-    console.log("FINAL PROMPT:", prompt);
 
     const resultRaw = await askAI(prompt, { timeout });
-    console.log("AI RESULT RAW:", resultRaw);
 
     const cleanedOutput = resultRaw
       .trim()

@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Document Approval</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+    background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+    margin: 0;
+    padding: 20px;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    color: #333;
+  }
+
+  .container {
+    max-width: 500px;
+    width: 100%;
+    background: white;
+    padding: 40px;
+    border-radius: 16px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    margin: 20px;
+  }
+
+  h1 {
+    font-size: 28px;
+    font-weight: 600;
+    color: #2c3e50;
+    margin-bottom: 10px;
+  }
+
+  p {
+    font-size: 16px;
+    color: #7f8c8d;
+    margin-bottom: 30px;
+    line-height: 1.5;
+  }
+
+  #signature-pad {
+    border: 2px dashed #bdc3c7;
+    width: 100%;
+    max-width: 300px;
+    height: 200px;
+    margin: 0 auto 20px;
+    background: #fff;
+    border-radius: 8px;
+    display: block;
+  }
+
+  #clearBtn {
+    padding: 10px 24px;
+    font-size: 14px;
+    background: #e74c3c;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    margin-bottom: 20px;
+  }
+
+  #clearBtn:hover {
+    background: #c0392b;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(231, 76, 60, 0.3);
+  }
+
+  .buttons {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+    margin-top: 20px;
+  }
+
+  .btn {
+    padding: 14px 32px;
+    font-size: 16px;
+    font-weight: 500;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-decoration: none;
+    display: inline-block;
+  }
+
+  .btn-primary {
+    background: #3498db;
+    color: white;
+  }
+
+  .btn-primary:hover {
+    background: #2980b9;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(52, 152, 219, 0.3);
+  }
+
+  .btn-danger {
+    background: #e74c3c;
+    color: white;
+  }
+
+  .btn-danger:hover {
+    background: #c0392b;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(231, 76, 60, 0.3);
+  }
+
+  .btn:active {
+    transform: scale(0.98);
+  }
+
+  #loadingMessage {
+    margin-top: 20px;
+    font-size: 16px;
+    color: #3498db;
+    display: none;
+    font-weight: 500;
+  }
+
+  #approvedMessage {
+    margin-top: 20px;
+    font-size: 18px;
+    color: #27ae60;
+    display: none;
+    font-weight: 600;
+    animation: fadeIn 0.5s ease-in;
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* Responsive Design */
+  @media (max-width: 600px) {
+    body {
+      padding: 10px;
+    }
+
+    .container {
+      padding: 20px;
+      margin: 10px;
+      border-radius: 12px;
+    }
+
+    h1 {
+      font-size: 24px;
+    }
+
+    p {
+      font-size: 14px;
+    }
+
+    .buttons {
+      flex-direction: column;
+      gap: 10px;
+      align-items: center;
+    }
+
+    .btn {
+      width: 100%;
+      max-width: 250px;
+      padding: 16px 24px;
+      font-size: 18px;
+    }
+
+    #signature-pad {
+      max-width: 250px;
+      height: 150px;
+    }
+  }
+</style>
+</head>
+
+<body>
+
+<div class="container">
+<h1>Approval Confirmation</h1>
+<p>Please sign below to confirm your approval.</p>
+
+<canvas id="signature-pad"></canvas>
+<br>
+<button id="clearBtn">Clear Signature</button>
+
+<div class="buttons">
+<button id="approveBtn" class="btn btn-primary">Approve</button>
+<button id="notApproveBtn" class="btn btn-danger" onclick="alert('Approval has been denied.');">Not Approve</button>
+</div>
+
+<div id="loadingMessage">Processing approval... (Validating with AI, sending email)</div>
+
+<div id="approvedMessage">✔ Signature Captured. Approved.</div>
+</div>
+
+<!-- Signature Pad Library -->
+<script src="https://cdn.jsdelivr.net/npm/signature_pad@4.1.5/dist/signature_pad.umd.min.js"></script>
+
+<script>
+  // Initialize signature pad
+  const canvas = document.getElementById("signature-pad");
+  const signaturePad = new SignaturePad(canvas);
+
+  // Resize canvas for retina displays
+  function resizeCanvas() {
+    const ratio = Math.max(window.devicePixelRatio || 1, 1);
+    canvas.width = canvas.offsetWidth * ratio;
+    canvas.height = canvas.offsetHeight * ratio;
+    canvas.getContext("2d").scale(ratio, ratio);
+  }
+  resizeCanvas();
+  window.onresize = resizeCanvas;
+
+  // Clear signature
+  document.getElementById("clearBtn").addEventListener("click", () => {
+    signaturePad.clear();
+  });
+
+  // Extract params from URL
+  const params = new URLSearchParams(window.location.search);
+  const step = params.get("step") || "A";
+  const assetId = params.get("assetId") || "unknown";
+
+  document.getElementById("approveBtn").addEventListener("click", () => {
+    console.log("Approve button clicked! Starting process...");  // Debug log
+
+    if (signaturePad.isEmpty()) {
+      return alert("Please sign first!");
+    }
+
+    const btn = document.getElementById("approveBtn");
+    const loading = document.getElementById("loadingMessage");
+    const message = document.getElementById("approvedMessage");
+
+    btn.disabled = true;
+    btn.textContent = "Processing...";
+    loading.style.display = "block";
+    message.style.display = "none";
+
+    fetch("http://localhost:3001/approve", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        step,
+        assetId,
+        approved: true
+      })
+    })
+    .then(response => {
+      console.log("Fetch response received with status:", response.status);  // Debug log
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      return response.json();
+    })
+    .then(data => {
+      console.log("Backend data received:", data);  // Debug log
+      loading.style.display = "none";
+      if (data.ok) {
+        btn.style.display = "none";
+        message.style.display = "block";
+      } else {
+        btn.disabled = false;
+        btn.textContent = "Approve";
+        alert("Approval failed: " + (data.error || "Unknown error"));
+      }
+    })
+    .catch(error => {
+      console.error("Fetch error occurred:", error);  // Debug log
+      loading.style.display = "none";
+      btn.disabled = false;
+      btn.textContent = "Approve";
+      alert("Error: " + error.message);
+    });
+  });
+</script>
+
+</body>
+</html>

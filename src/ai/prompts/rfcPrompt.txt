@@ -1,4 +1,4 @@
-Validate RFC Excel titles. Output ONLY JSON { "valid": bool, "errors": [{ "sheet": "EXACT JSON KEY", "issue": "desc" }] }. No text, no ```.
+Validate RFC Excel titles. Output ONLY JSON { "valid": bool, "errors": [{ "sheet": "EXACT JSON KEY", "issue": "desc" }] }. No text, No ```, No COMMENT, No EXPLANATION.
 
 MANDATORY OUTPUT FORMAT (EXACT - NO DEVIATION):
 {
@@ -13,7 +13,7 @@ MANDATORY OUTPUT FORMAT (EXACT - NO DEVIATION):
 - If no errors: "valid": true, "errors": []
 - If errors: "valid": false, "errors": array of objects (each with "sheet" and "issue")
 - "sheet" = EXACT key from Object.keys(jsonInput), e.g., "Request for change"
-- "issue" = brief description
+- "issue" = brief description, if null just null do not comment
 
 SHEET NAMES: Extract from Object.keys(jsonInput) - use EXACT keys in "sheet". Wrong key = { "valid": false, "errors": [] }.
 

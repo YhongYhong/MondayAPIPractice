@@ -5,7 +5,7 @@ import { fileURLToPath } from "url";
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-export async function formatReport(analysis, templatePath = path.join(__dirname, "templates/formattedHtml.html")) {
+export async function formatReport(analysis, fileName, linkStep = "A", templatePath = path.join(__dirname, "templates/formattedHtml.html")) {
   const { valid = false, errors = [] } = analysis;
 
   const color = valid ? "green" : "red";
@@ -29,10 +29,12 @@ export async function formatReport(analysis, templatePath = path.join(__dirname,
 
   try {
     const htmlTemplate = await fs.readFile(templatePath, "utf-8");
+    const approvalHref = `http://localhost:3001/approval.html?step=${linkStep}&assetId=${fileName}`;
     const formattedHtml = htmlTemplate
       .replace("{{color}}", color)
       .replace("{{validityText}}", validityText)
-      .replace("{{errorListHTML}}", errorListHTML);
+      .replace("{{errorListHTML}}", errorListHTML)
+      .replace(/href="http:\/\/localhost:3001\/approval\.html\?step=A&file=RFC_mock"/, `href="${approvalHref}"`);
 
     return formattedHtml;
   } catch (error) {
